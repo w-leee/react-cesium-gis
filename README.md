@@ -78,6 +78,7 @@ Cesium 三维地球 + ECharts 图表
 
 ### 1. 后端
 
+```bash
 cd backend
 
 # 1. 激活虚拟环境
@@ -88,6 +89,7 @@ pip install -r requirements.txt
 
 # 3. 启动
 python main.py
+```
 
 服务地址：`http://127.0.0.1:8001`
 
@@ -98,7 +100,7 @@ npm install
 npm run dev
 ```
 
-浏览器打开：http://localhost:5173  
+浏览器打开：<http://localhost:5173>
 
 前端通过 Vite 代理访问 `http://127.0.0.1:8001/api/*`。
 
@@ -204,8 +206,15 @@ react-cesium-gis/
 | `MODEL_SCALE` | 风机模型缩放 |
 
 打开时远近：`sphere.radius = Math.max(sphere.radius * …, …)` 系数越小越近。
+
+---
+
+## 后续扩展：叶片裂纹检测链路
+
+计划接入的真实检测功能，共 5 步流程：
+
 1. **前端**：用户选择图片上传，发给 GIS 后端接口 `/api/blade_crack_detect`
 2. **GIS 后端（8000）**：接收图片二进制，作为**中转代理**，把图片转发请求到 YOLO 服务 `127.0.0.1:8001/detect_crack`
-3. **YOLO 服务（8001）**：接收图片，模型推理，算出所有缺陷的`bbox坐标、置信度`，返回 JSON
+3. **YOLO 服务（8001）**：接收图片，模型推理，算出所有缺陷的 `bbox 坐标、置信度`，返回 JSON
 4. **GIS 后端**：拿到 YOLO 返回的 JSON，直接原样传回前端
 5. **前端**：收到 JSON 里的坐标，用 Canvas 在原图上绘制矩形标注框 + 置信度文字展示
