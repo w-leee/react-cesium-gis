@@ -204,3 +204,8 @@ react-cesium-gis/
 | `MODEL_SCALE` | 风机模型缩放 |
 
 打开时远近：`sphere.radius = Math.max(sphere.radius * …, …)` 系数越小越近。
+1. **前端**：用户选择图片上传，发给 GIS 后端接口 `/api/blade_crack_detect`
+2. **GIS 后端（8000）**：接收图片二进制，作为**中转代理**，把图片转发请求到 YOLO 服务 `127.0.0.1:8001/detect_crack`
+3. **YOLO 服务（8001）**：接收图片，模型推理，算出所有缺陷的`bbox坐标、置信度`，返回 JSON
+4. **GIS 后端**：拿到 YOLO 返回的 JSON，直接原样传回前端
+5. **前端**：收到 JSON 里的坐标，用 Canvas 在原图上绘制矩形标注框 + 置信度文字展示
