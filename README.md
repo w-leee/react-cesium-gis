@@ -30,7 +30,7 @@ Cesium 三维地球 + ECharts 图表
 | **ECharts** | 6.x | 圆环指标、功率趋势、状态占比、故障折线 |
 | **CSS** | 原生 | 大屏 HUD 布局与科技风样式（无 UI 组件库） |
 
-入口：`index.html` → `src/main.jsx` → `App.jsx` → `WindScreen`。
+入口：`frontend/index.html` → `frontend/src/main.jsx` → `App.jsx` → `WindScreen`。
 
 ### 后端
 
@@ -46,8 +46,8 @@ Cesium 三维地球 + ECharts 图表
 | 类型 | 说明 |
 |------|------|
 | 接口数据 | 前端 `fetch('/api/dashboard')`，开发时由 Vite 转发到 `127.0.0.1:8001` |
-| 风机模型 | `public/model/windturbine.glb`（glTF 二进制） |
-| Cesium 资源 | `public/cesium/`（Workers / Assets / Widgets） |
+| 风机模型 | `frontend/public/model/windturbine.glb`（glTF 二进制） |
+| Cesium 资源 | `frontend/public/cesium/`（Workers / Assets / Widgets） |
 | 底图 | ArcGIS World Imagery 在线瓦片（需联网） |
 
 ### 未使用（刻意保持简单）
@@ -70,7 +70,7 @@ Cesium 三维地球 + ECharts 图表
 - [x] 底部：故障数 / 设备数 / 今日发电 / 总功率
 - [x] Python 假数据 API（`GET /api/dashboard`）
 
-后续接入真实模型：替换 `public/model/windturbine.glb`，必要时调整 `CesiumMap.jsx` 中的 `MODEL_SCALE`。
+后续接入真实模型：替换 `frontend/public/model/windturbine.glb`，必要时调整 `frontend/src/components/CesiumMap.jsx` 中的 `MODEL_SCALE`。
 
 ---
 
@@ -96,7 +96,10 @@ python main.py
 ### 2. 前端（另开终端）
 
 ```bash
+cd frontend
+
 npm install
+
 npm run dev
 ```
 
@@ -108,40 +111,48 @@ npm run dev
 
 ## 正在使用的文件结构
 
+> 采用 **前后端目录分离**：前端整体放在 `frontend/`（`frontend/` 即 Vite 项目根目录），后端放在 `backend/`。
+
 ```
 react-cesium-gis/
-├── package.json              # 依赖与 npm 脚本
-├── package-lock.json         # 锁定依赖版本
-├── vite.config.js            # Vite 配置（API 代理、Cesium）
-├── index.html                # 前端 HTML 入口
-├── .gitignore                # Git 忽略规则
-├── eslint.config.js          # ESLint 配置（可选）
 ├── README.md                 # 本说明文档
+├── .gitignore                # Git 忽略规则（前后端共用）
+├── docs/                     # 补充说明文档
+│   └── API.md                # 接口字段与前后端对照
 │
-├── src/                      # 前端源码
-│   ├── main.jsx              # React 挂载入口
-│   ├── App.jsx               # 根组件
-│   ├── index.css             # 全局样式
-│   ├── api/
-│   │   └── client.js         # 请求后端数据
-│   └── components/
-│       ├── WindScreen.jsx    # 监控大屏布局
-│       ├── WindScreen.css    # 大屏样式
-│       ├── CesiumMap.jsx     # 三维地图与风机交互
-│       └── charts/
-│           ├── GaugeRow.jsx      # 运行指标圆环
-│           ├── PowerTrend.jsx    # 功率趋势折线
-│           ├── StatusDonut.jsx   # 机组状态占比
-│           └── FaultLine.jsx     # 故障归类分析
-│
-├── public/                   # 静态资源
-│   ├── favicon.svg           # 网站图标
-│   ├── model/
-│   │   └── windturbine.glb   # 风机三维模型
-│   └── cesium/               # Cesium 运行时资源
-│       ├── Assets/
-│       ├── Workers/
-│       └── Widgets/
+├── frontend/                 # 前端工程（Vite 项目根目录）
+│   ├── package.json          # 依赖与 npm 脚本
+│   ├── package-lock.json     # 锁定依赖版本
+│   ├── vite.config.js        # Vite 配置（API 代理、Cesium）
+│   ├── index.html            # 前端 HTML 入口
+│   ├── eslint.config.js      # ESLint 配置（可选）
+│   │
+│   ├── src/                  # 前端源码
+│   │   ├── main.jsx          # React 挂载入口
+│   │   ├── App.jsx           # 根组件
+│   │   ├── index.css         # 全局样式
+│   │   ├── api/
+│   │   │   └── client.js     # 请求后端数据
+│   │   └── components/
+│   │       ├── WindScreen.jsx      # 监控大屏布局
+│   │       ├── WindScreen.css      # 大屏样式
+│   │       ├── CesiumMap.jsx       # 三维地图与风机交互
+│   │       ├── BladeCrackDetect.jsx    # 叶片裂纹检测（5 步流程）
+│   │       ├── CrackResultViewer.jsx   # 检测结果标注展示
+│   │       └── charts/
+│   │           ├── GaugeRow.jsx      # 运行指标圆环
+│   │           ├── PowerTrend.jsx    # 功率趋势折线
+│   │           ├── StatusDonut.jsx   # 机组状态占比
+│   │           └── FaultLine.jsx     # 故障归类分析
+│   │
+│   └── public/               # 静态资源
+│       ├── favicon.svg       # 网站图标
+│       ├── model/
+│       │   └── windturbine.glb   # 风机三维模型
+│       └── cesium/           # Cesium 运行时资源
+│           ├── Assets/
+│           ├── Workers/
+│           └── Widgets/
 │
 └── backend/                  # Python 假数据后端
     ├── main.py               # FastAPI 入口（python main.py 启动）
@@ -153,22 +164,24 @@ react-cesium-gis/
 
 | 分类 | 文件 | 用途 |
 |------|------|------|
-| 配置 | `package.json` | 依赖与启动脚本 |
-| 配置 | `package-lock.json` | 锁定依赖版本 |
-| 配置 | `vite.config.js` | 前端构建、`/api` 代理、Cesium |
-| 配置 | `index.html` | 页面入口 |
-| 配置 | `.gitignore` | 忽略 `node_modules` 等 |
-| 配置 | `eslint.config.js` | 代码检查（不影响运行） |
-| 前端 | `src/main.jsx` | React 挂载 |
-| 前端 | `src/App.jsx` | 根组件 |
-| 前端 | `src/index.css` | 全局样式 |
-| 前端 | `src/api/client.js` | 调用 `/api/dashboard` |
+| 配置 | `frontend/package.json` | 依赖与启动脚本 |
+| 配置 | `frontend/package-lock.json` | 锁定依赖版本 |
+| 配置 | `frontend/vite.config.js` | 前端构建、`/api` 代理、Cesium |
+| 配置 | `frontend/index.html` | 页面入口 |
+| 配置 | `.gitignore` | 忽略 `node_modules`、`__pycache__` 等 |
+| 配置 | `frontend/eslint.config.js` | 代码检查（不影响运行） |
+| 前端 | `frontend/src/main.jsx` | React 挂载 |
+| 前端 | `frontend/src/App.jsx` | 根组件 |
+| 前端 | `frontend/src/index.css` | 全局样式 |
+| 前端 | `frontend/src/api/client.js` | 调用 `/api/dashboard` |
 | 前端 | `WindScreen.*` | 大屏 HUD 布局与样式 |
 | 前端 | `CesiumMap.jsx` | 地图、风机、相机环绕 |
+| 前端 | `BladeCrackDetect.jsx` | 上传图片 → 调 `/api/blade_crack_detect` |
+| 前端 | `CrackResultViewer.jsx` | Canvas 绘制缺陷框 + 置信度 |
 | 前端 | `charts/*` | ECharts 图表 |
-| 静态 | `public/favicon.svg` | 浏览器图标 |
-| 静态 | `public/model/windturbine.glb` | 风机模型 |
-| 静态 | `public/cesium/` | Cesium Workers / Assets |
+| 静态 | `frontend/public/favicon.svg` | 浏览器图标 |
+| 静态 | `frontend/public/model/windturbine.glb` | 风机模型 |
+| 静态 | `frontend/public/cesium/` | Cesium Workers / Assets |
 | 后端 | `backend/main.py` | API 服务 |
 | 后端 | `backend/mock_data.py` | 假数据 |
 | 后端 | `backend/requirements.txt` | FastAPI / uvicorn |
@@ -177,9 +190,9 @@ react-cesium-gis/
 
 | 路径 | 说明 |
 |------|------|
-| `node_modules/` | `npm install` 生成 |
+| `frontend/node_modules/` | `npm install` 生成 |
 | `backend/__pycache__/` | Python 运行缓存（已加入 `.gitignore`） |
-| `dist/` | `npm run build` 产物 |
+| `frontend/dist/` | `npm run build` 产物 |
 
 ---
 
@@ -196,7 +209,7 @@ react-cesium-gis/
 
 ---
 
-## 相机相关参数（`src/components/CesiumMap.jsx`）
+## 相机相关参数（`frontend/src/components/CesiumMap.jsx`）
 
 | 常量 | 含义 |
 |------|------|
