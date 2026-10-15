@@ -78,11 +78,16 @@ Cesium 三维地球 + ECharts 图表
 
 ### 1. 后端
 
-```bash
 cd backend
+
+# 1. 激活虚拟环境
+.venv\Scripts\activate
+
+# 2. 安装依赖
 pip install -r requirements.txt
+
+# 3. 启动
 python main.py
-```
 
 服务地址：`http://127.0.0.1:8001`
 
